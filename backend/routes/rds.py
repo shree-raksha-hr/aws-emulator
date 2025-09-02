@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from db.schema import DBCreate, DBResponse
+from db.schema import DBCreate, DBResponse, List
 from sqlalchemy.orm import Session
 from db.database import get_db
 from db.models import DBInstance
@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["rds"]
 )
 
-@router.post("/db-instances", response_model=DBResponse)
+@router.post("/", response_model=DBResponse)
 def create_db(request:DBCreate, db:Session = Depends(get_db)):
     engine=request.engine.lower()
     if engine=="postgres":
@@ -75,4 +75,54 @@ def create_db(request:DBCreate, db:Session = Depends(get_db)):
 
     except docker.errors.APIError as e:
         raise HTTPException(status_code=500, detail=f"Docker error: {str(e)}")
+
+
+@router.get("/", response_model = List[DBResponse])
+def list_instances( db:Session = Depends(get_db)):
+    instances = db.query(DBInstance).all()
+    response=[]
+    for i in instances:
+        response.append({
+            "identifier":i.identifier,
+            "username":i.username,
+            "password":i.password,
+            "instance_id":i.id,
+            "endpoint":i.endpoint,
+            "port":i.port,
+            "status":i.status
+        })
+
+    return response
+
+
+@router.get("/{instance_id}", response_model=DBResponse)
+def get_instance(instance_id,db:Session = Depends(get_db)):
+    i = db.query(DBInstance).filter(DBInstance.id==instance_id).first()
+    if not i:
+        raise HTTPException(404, "Instance not found")
+    return {
+        "identifier":i.identifier,
+        "username":i.username,
+        "password":i.password,
+        "instance_id":i.id,
+        "endpoint":i.endpoint,
+        "port":i.port,
+        "status":i.status
+    }
+
+@router.delete("/{instance_id}")
+def delete_instance(instance_id, db:Session=Depends(get_db)):
+    instance = db.query(DBInstance).filter(DBInstance.id==instance_id).first()
+    if not instance:
+        raise HTTPException(404, "Instance not found")
     
+    try:
+        container = client.containers.get(instance.identifier)
+        container.stop()
+        container.remove()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Docker error: {e}")
+    
+    db.delete(instance)
+    db.commit()
+    return {"msg":f"Deleted instance with id {instance_id}"}
