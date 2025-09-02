@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
+#===============User models================
+
 class User(BaseModel):
     id:int
     name:str
@@ -22,7 +24,37 @@ class UserResponse(UserBase):
     class Config:
         orm_mode = True
 
+#===============S3 models================
+class BucketCreate(BaseModel):
+    name:str
 
+class BucketResponse(BaseModel):
+    name:str
+
+class ObjectUpload(BaseModel):
+    key:str
+    data:str
+
+class ObjectListResponse(BaseModel):
+    key:str
+
+
+#===============RDS models================
+class DBBase(BaseModel):
+    identifier:str
+    username:str
+    password:str
+
+class DBCreate(DBBase):
+    engine:str
+
+class DBResponse(DBBase):
+    instance_id:str
+    endpoint:str
+    port:int
+    status:str
+
+#===============Auth models================
 
 class Login(BaseModel):
     username:str
