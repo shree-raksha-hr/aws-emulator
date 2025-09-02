@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLDB = 'sqlite:///./ecom.db'
+SQLDB = 'sqlite:///./aws-emulator.db'
 
 engine = create_engine(SQLDB, connect_args={"check_same_thread":False})
 
