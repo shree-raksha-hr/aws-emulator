@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from db.database import engine
 from db import models
-from routes import user, auth
+from routes import user, auth, ec2, rds, s3
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,3 +20,9 @@ models.Base.metadata.create_all(engine)
 app.include_router(user.router)
 
 app.include_router(auth.router)
+
+app.include_router(ec2.router)
+
+app.include_router(rds.router)
+
+app.include_router(s3.router)
