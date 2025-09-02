@@ -19,3 +19,15 @@ def create_user(request:UserCreate, db:Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@router.get("/{id}")
+def get_user(id, db:Session = Depends(get_db)):
+    user = db.query(User).filter(User.id==id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    return user
+
+@router.get("/")
+def get_all_users(db:Session = Depends(get_db)):
+    users = db.query(User).all()
+    return users
