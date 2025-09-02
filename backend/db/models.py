@@ -16,6 +16,18 @@ class Bucket(Base):
     name = Column(String, primary_key=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
+    objects = relationship("S3Object", back_populates="bucket", cascade="all, delete-orphan")
+
+class S3Object(Base):
+    __tablename__ = "objects"
+
+    key = Column(String, primary_key=True)
+    bucket_name = Column(String, ForeignKey("buckets.name", ondelete="CASCADE"), primary_key=True)
+    data_path = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    bucket = relationship("Bucket", back_populates="objects")
+
 class DBInstance(Base):
     __tablename__ = "db_instances"
     id = Column(String, primary_key=True)

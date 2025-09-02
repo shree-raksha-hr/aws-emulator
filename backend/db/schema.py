@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
+from datetime import datetime
 
 #===============User models================
 
@@ -25,19 +26,21 @@ class UserResponse(UserBase):
         orm_mode = True
 
 #===============S3 models================
+class ObjectUpload(BaseModel):
+    key:str
+    data:str
+
+class ObjectResponse(BaseModel):
+    key:str
+    created_at: Optional[datetime]
+
 class BucketCreate(BaseModel):
     name:str
 
 class BucketResponse(BaseModel):
     name:str
-
-class ObjectUpload(BaseModel):
-    key:str
-    data:str
-
-class ObjectListResponse(BaseModel):
-    key:str
-
+    created_at:Optional[datetime]
+    objects: Optional[List[ObjectResponse]] = []
 
 #===============RDS models================
 class DBBase(BaseModel):
