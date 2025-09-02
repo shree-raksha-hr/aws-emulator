@@ -6,7 +6,8 @@ from db.models import DBInstance
 import docker
 from datetime import datetime
 
-client = docker.DockerClient(base_url='unix:///home/raksha/.docker/desktop/docker.sock')
+client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
+
 
 router = APIRouter(
     prefix="/rds",

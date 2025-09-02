@@ -15,7 +15,7 @@ router = APIRouter(
 
 BASE_PATH = "data/s3"
 
-client = docker.DockerClient(base_url='unix:///home/raksha/.docker/desktop/docker.sock')
+client = docker.DockerClient(base_url='unix:///var/run/docker.sock')
 
 @router.post("/", response_model=BucketResponse)
 def create_bucket(request:BucketCreate, db:Session=Depends(get_db)):
