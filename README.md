@@ -4,7 +4,8 @@ A local AWS emulator for development and testing. Runs EC2, S3, and RDS services
 
 ## Architecture
 
-![image.png](attachment:ccfdc771-4006-4edd-845e-7c03acb35553:image.png)
+<img width="788" height="753" alt="image" src="https://github.com/user-attachments/assets/ff2a819d-f05f-4936-9a34-c0b1b7f776d4" />
+
 
 ## Tech Stack
 
